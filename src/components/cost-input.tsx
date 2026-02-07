@@ -1,66 +1,41 @@
-
 "use client";
 
-import type { Dispatch, SetStateAction } from 'react';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { cn } from '@/lib/utils';
-import { Button } from './ui/button';
-import { Info } from 'lucide-react';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog"
-
+import * as React from "react";
+import { cn } from "@/lib/utils";
 
 interface CostInputProps {
-  label: string;
-  id: string;
-  value: number;
-  setValue: Dispatch<SetStateAction<number>> | ((value: number) => void);
-  unit?: string;
+  value: number | string;
+  onChange: (value: number) => void;
+  suffix?: string;
   className?: string;
-  breakdown?: React.ReactNode;
+  placeholder?: string;
 }
 
-export function CostInput({ label, id, value, setValue, unit, className, breakdown }: CostInputProps) {
+export function CostInput({
+  value,
+  onChange,
+  suffix,
+  className,
+  placeholder,
+}: CostInputProps) {
   return (
-    <div className={cn("space-y-1.5", className)}>
-      <div className="flex items-center">
-        <Label htmlFor={id} className="text-xs text-muted-foreground">{label}</Label>
-        {breakdown && (
-            <Dialog>
-                <DialogTrigger asChild>
-                    <Button variant="ghost" size="icon" className="h-5 w-5 ml-1 hover:bg-transparent">
-                        <Info className="h-3 w-3 text-muted-foreground" />
-                    </Button>
-                </DialogTrigger>
-                <DialogContent>
-                <DialogHeader>
-                    <DialogTitle>{label} Breakdown</DialogTitle>
-                </DialogHeader>
-                {breakdown}
-                </DialogContent>
-            </Dialog>
+    <div className="relative">
+      <input
+        type="number"
+        value={value}
+        onChange={(e) => onChange(Number(e.target.value))}
+        placeholder={placeholder}
+        className={cn(
+          "flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 pr-10 text-sm",
+          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+          className
         )}
-      </div>
-      <div className="relative">
-        <Input
-          type="number"
-          inputMode="decimal"
-          id={id}
-          value={String(value)}
-          onChange={(e) => setValue(parseFloat(e.target.value) || 0)}
-          onWheel={(e) => (e.target as HTMLElement).blur()}
-          className="pr-10"
-          step="0.01"
-          aria-label={label}
-        />
-        {unit && <span className="absolute inset-y-0 right-0 flex items-center pr-3 text-xs text-muted-foreground pointer-events-none">{unit}</span>}
-      </div>
+      />
+      {suffix && (
+        <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground">
+          {suffix}
+        </span>
+      )}
     </div>
   );
 }

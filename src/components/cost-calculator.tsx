@@ -3,7 +3,6 @@
 import { useState, useMemo, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { CostInput } from "@/components/cost-input";
 import { ResultDisplay } from "@/components/result-display";
 import { Label } from "@/components/ui/label";
 import {
@@ -14,13 +13,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
-
-/* -------------------- Utils -------------------- */
-const formatCurrency = (value: number) =>
-  new Intl.NumberFormat("en-IN", {
-    style: "currency",
-    currency: "INR",
-  }).format(isNaN(value) ? 0 : value);
 
 /* ------------------- Presets ------------------- */
 const PRESETS = {
@@ -34,7 +26,6 @@ const PRESETS = {
   },
 };
 
-/* ================= COMPONENT ================= */
 export function CostCalculator() {
   /* Product */
   const [scarfSize, setScarfSize] =
@@ -44,63 +35,82 @@ export function CostCalculator() {
   const [fabricPerPiece, setFabricPerPiece] = useState(1);
 
   /* Prices */
-  const [fabricPrice, setFabricPrice] = useState(38);
-  const [printingPrice, setPrintingPrice] = useState(20);
-  const [shrinkage, setShrinkage] = useState(2);
+  const [fabricPrice, setFabricPrice] = useState("");
+  const [printingPrice, setPrintingPrice] = useState("");
+  const [shrinkage, setShrinkage] = useState("");
 
   /* Costs */
-  const [cuttingCost, setCuttingCost] = useState(2);
-  const [stitchingCost, setStitchingCost] = useState(14);
-  const [ironingCost, setIroningCost] = useState(4);
-  const [packagingCost, setPackagingCost] = useState(9);
-  const [deliveryCost, setDeliveryCost] = useState(69);
+  const [cuttingCost, setCuttingCost] = useState("");
+  const [stitchingCost, setStitchingCost] = useState("");
+  const [ironingCost, setIroningCost] = useState("");
+  const [packagingCost, setPackagingCost] = useState("");
+  const [deliveryCost, setDeliveryCost] = useState("");
 
   /* Overheads */
-  const [defective, setDefective] = useState(2);
-  const [returns, setReturns] = useState(10);
-  const [deadStock, setDeadStock] = useState(5);
-  const [officeMaintenance, setOfficeMaintenance] = useState(10);
-  const [profitMargin, setProfitMargin] = useState(25);
+  const [defective, setDefective] = useState("");
+  const [returns, setReturns] = useState("");
+  const [deadStock, setDeadStock] = useState("");
+  const [officeMaintenance, setOfficeMaintenance] = useState("");
+  const [profitMargin, setProfitMargin] = useState("");
 
-  /* ---------------- Effects ---------------- */
+  /* -------- RESET INPUTS (KEY FIX) -------- */
+  const resetInputs = () => {
+    setFabricPrice("");
+    setPrintingPrice("");
+    setShrinkage("");
+
+    setCuttingCost("");
+    setStitchingCost("");
+    setIroningCost("");
+    setPackagingCost("");
+    setDeliveryCost("");
+
+    setDefective("");
+    setReturns("");
+    setDeadStock("");
+    setOfficeMaintenance("");
+    setProfitMargin("");
+  };
+
+  /* -------- PRESET EFFECT (UNCHANGED LOGIC) -------- */
   useEffect(() => {
     const preset = PRESETS[scarfSize];
     setPrintingSize(preset.printingSize);
     setFabricPerPiece(preset.fabricPerPiece);
-
-    const stored = localStorage.getItem("shrinkagePercentage");
-    if (stored) setShrinkage(Number(stored));
   }, [scarfSize]);
-
-  /* -------- SHRINKAGE HANDLER (IMPORTANT FIX) -------- */
-  const handleShrinkageChange = (value: number) => {
-    setShrinkage(value);
-    localStorage.setItem("shrinkagePercentage", String(value));
-  };
 
   /* ---------------- Calculations ---------------- */
   const results = useMemo(() => {
+    const num = (v: string) => Number(v) || 0;
+
     const fabricCost =
-      fabricPerPiece * fabricPrice * (1 + shrinkage / 100);
+      fabricPerPiece *
+      num(fabricPrice) *
+      (1 + num(shrinkage) / 100);
 
     const productionCost =
       fabricCost +
-      printingPrice * fabricPerPiece +
-      cuttingCost +
-      stitchingCost +
-      ironingCost;
+      num(printingPrice) * fabricPerPiece +
+      num(cuttingCost) +
+      num(stitchingCost) +
+      num(ironingCost);
 
     const finishedCost =
-      productionCost + packagingCost + deliveryCost;
+      productionCost +
+      num(packagingCost) +
+      num(deliveryCost);
 
     const overheadPercent =
-      defective + returns + deadStock + officeMaintenance;
+      num(defective) +
+      num(returns) +
+      num(deadStock) +
+      num(officeMaintenance);
 
     const overheadValue =
       finishedCost * (overheadPercent / 100);
 
     const grandTotal = finishedCost + overheadValue;
-    const profit = grandTotal * (profitMargin / 100);
+    const profit = grandTotal * (num(profitMargin) / 100);
     const sellingPrice = grandTotal + profit;
 
     return {
@@ -132,7 +142,6 @@ export function CostCalculator() {
       <h1 className="text-3xl font-bold mb-6">Scarf Cost</h1>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* LEFT */}
         <div className="lg:col-span-2 space-y-6">
           <Card>
             <CardHeader>
@@ -144,9 +153,10 @@ export function CostCalculator() {
                 <Label>Scarf Size</Label>
                 <Select
                   value={scarfSize}
-                  onValueChange={(v) =>
-                    setScarfSize(v as "90x90 cm" | "50x50 cm")
-                  }
+                  onValueChange={(v) => {
+                    setScarfSize(v as "90x90 cm" | "50x50 cm");
+                    resetInputs(); // ✅ MAIN FIX
+                  }}
                 >
                   <SelectTrigger>
                     <SelectValue />
@@ -168,29 +178,22 @@ export function CostCalculator() {
                 <Input value={`${fabricPerPiece} m`} disabled />
               </div>
 
-              <CostInput
-                id="fabric-price"
-                label="Fabric Price"
-                value={fabricPrice}
-                setValue={setFabricPrice}
-                unit="/m"
-              />
-
-              <CostInput
-                id="printing-price"
-                label="Printing Price"
-                value={printingPrice}
-                setValue={setPrintingPrice}
-                unit="/m"
-              />
-
-              <CostInput
-                id="shrinkage"
-                label="Shrinkage"
-                value={shrinkage}
-                setValue={handleShrinkageChange}
-                unit="%"
-              />
+              {[
+                ["Fabric Price", fabricPrice, setFabricPrice],
+                ["Printing Price", printingPrice, setPrintingPrice],
+                ["Shrinkage", shrinkage, setShrinkage],
+              ].map(([label, value, setter]) => (
+                <div key={label as string}>
+                  <Label>{label}</Label>
+                  <Input
+                    value={value as string}
+                    onChange={(e) => setter(e.target.value)}
+                    type="number"
+                    inputMode="numeric"
+                    placeholder="Enter value"
+                  />
+                </div>
+              ))}
             </CardContent>
           </Card>
 
@@ -199,16 +202,28 @@ export function CostCalculator() {
               <CardTitle>Operational Costs</CardTitle>
             </CardHeader>
             <CardContent className="grid sm:grid-cols-2 lg:grid-cols-5 gap-4">
-              <CostInput id="cutting" label="Cutting" value={cuttingCost} setValue={setCuttingCost} />
-              <CostInput id="stitching" label="Stitching" value={stitchingCost} setValue={setStitchingCost} />
-              <CostInput id="ironing" label="Ironing" value={ironingCost} setValue={setIroningCost} />
-              <CostInput id="packaging" label="Packaging" value={packagingCost} setValue={setPackagingCost} />
-              <CostInput id="delivery" label="Delivery" value={deliveryCost} setValue={setDeliveryCost} />
+              {[
+                ["Cutting", cuttingCost, setCuttingCost],
+                ["Stitching", stitchingCost, setStitchingCost],
+                ["Ironing", ironingCost, setIroningCost],
+                ["Packaging", packagingCost, setPackagingCost],
+                ["Delivery", deliveryCost, setDeliveryCost],
+              ].map(([label, value, setter]) => (
+                <div key={label as string}>
+                  <Label>{label}</Label>
+                  <Input
+                    value={value as string}
+                    onChange={(e) => setter(e.target.value)}
+                    type="number"
+                    inputMode="numeric"
+                    placeholder="Enter value"
+                  />
+                </div>
+              ))}
             </CardContent>
           </Card>
         </div>
 
-        {/* RIGHT */}
         <div className="lg:sticky lg:top-6">
           <Card>
             <CardHeader>

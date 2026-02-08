@@ -118,7 +118,7 @@ export function SewingThreadCalculator() {
     return (
         <div className="container mx-auto max-w-6xl p-4 sm:p-6 lg:p-8">
             <header className="mb-8">
-                <h1 className="text-3xl font-bold text-foreground">Sewing Thread Calculator</h1>
+                <h1 className="text-3xl font-bold text-foreground">Sewing Thread</h1>
                 <p className="text-muted-foreground mt-1 max-w-2xl">
                     Calculate total thread consumption and cost for a batch of scarves with mixed sizes.
                 </p>

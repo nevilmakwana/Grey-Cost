@@ -67,7 +67,7 @@ export function FabricLogisticsCalculator() {
     return (
         <div className="container mx-auto max-w-6xl p-4 sm:p-6 lg:p-8">
             <header className="mb-8">
-                <h1 className="text-3xl font-bold text-foreground">Multi-Stage Logistics Calculator</h1>
+                <h1 className="text-3xl font-bold text-foreground">Multi-Stage Logistics</h1>
                 <p className="text-muted-foreground mt-1 max-w-2xl">
                     Calculate the total delivery cost per piece across multiple logistics stages, from raw material to finished goods.
                 </p>

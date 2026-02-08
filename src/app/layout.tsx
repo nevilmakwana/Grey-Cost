@@ -1,4 +1,8 @@
 
+if (typeof window !== "undefined") {
+  (window as any).ethereum = undefined;
+}
+ 
 import type {Metadata} from 'next';
 import './globals.css';
 import { Toaster } from "@/components/ui/toaster";
@@ -8,7 +12,7 @@ import { ThemeProvider } from '@/components/theme-provider';
 import { MobileHeader } from '@/components/mobile-header';
 
 export const metadata: Metadata = {
-  title: 'GreyCost - Scarf Cost Calculator',
+  title: 'GreyCost - Scarf Cost',
   description: 'Calculate the production cost and selling price of your products.',
 };
 

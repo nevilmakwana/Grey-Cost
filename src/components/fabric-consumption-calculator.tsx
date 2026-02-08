@@ -126,7 +126,7 @@ export function FabricConsumptionCalculator() {
     return (
         <div className="container mx-auto max-w-7xl p-4 sm:p-6 lg:p-8">
             <header className="mb-8">
-                <h1 className="text-3xl font-bold text-foreground">Fabric Consumption Calculator</h1>
+                <h1 className="text-3xl font-bold text-foreground">Fabric Consumption</h1>
                 <p className="text-muted-foreground mt-1 max-w-2xl">
                     Calculate the total fabric needed based on scarf sizes, fabric width, gaps, and shrinkage.
                 </p>
@@ -243,12 +243,18 @@ export function FabricConsumptionCalculator() {
                                     <p className="font-medium">{formatNumber(totalFabricNeeded - totalFabricNeededBeforeShrinkage)} m</p>
                                 </div>
                                 <Separator />
-                                <div className="flex justify-between items-center">
-                                    <p className="text-base font-bold text-primary uppercase tracking-wider">Total Fabric Required</p>
-                                    <p className="text-2xl font-bold text-primary tracking-tight">
-                                        {formatNumber(totalFabricNeeded)} m
+                                <div className="flex justify-between items-center gap-3">
+                                    <p className="text-sm font-semibold text-primary uppercase tracking-wide">
+                                        Total Fabric Required
                                     </p>
-                                </div>
+
+                                    <p className="flex items-baseline gap-1 font-bold text-primary whitespace-nowrap">
+                                        <span className="text-xl tracking-tight">
+                                        {formatNumber(totalFabricNeeded)}
+                                        </span>
+                                        <span className="text-sm">m</span>
+                                    </p>
+                                    </div>
                             </div>
                         </CardContent>
                      </Card>

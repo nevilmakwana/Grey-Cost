@@ -1,41 +1,48 @@
 "use client";
 
-import * as React from "react";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 
 interface CostInputProps {
-  value: number | string;
-  onChange: (value: number) => void;
-  suffix?: string;
+  id: string;
+  label: string; // ✅ FIX: label added
+  value: number;
+  setValue: React.Dispatch<React.SetStateAction<number>>;
+  unit?: string;
   className?: string;
-  placeholder?: string;
 }
 
 export function CostInput({
+  id,
+  label,
   value,
-  onChange,
-  suffix,
+  setValue,
+  unit,
   className,
-  placeholder,
 }: CostInputProps) {
   return (
-    <div className="relative">
-      <input
-        type="number"
-        value={value}
-        onChange={(e) => onChange(Number(e.target.value))}
-        placeholder={placeholder}
-        className={cn(
-          "flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 pr-10 text-sm",
-          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
-          className
+    <div className={cn("space-y-1.5", className)}>
+      <Label htmlFor={id} className="text-sm">
+        {label}
+      </Label>
+
+      <div className="relative">
+        <Input
+          id={id}
+          type="number"
+          value={value}
+          onChange={(e) => setValue(Number(e.target.value) || 0)}
+          onWheel={(e) => (e.target as HTMLElement).blur()}
+          className={unit ? "pr-10" : ""}
+        />
+
+        {unit && (
+          <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">
+            {unit}
+          </span>
         )}
-      />
-      {suffix && (
-        <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground">
-          {suffix}
-        </span>
-      )}
+      </div>
     </div>
   );
 }

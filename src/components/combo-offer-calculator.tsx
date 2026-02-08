@@ -156,7 +156,7 @@ export function ComboOfferCalculator() {
     return (
         <div className="container mx-auto max-w-7xl p-4 sm:p-6 lg:p-8">
             <header className="mb-8">
-                <h1 className="text-3xl font-bold text-foreground">Combo Offer Calculator</h1>
+                <h1 className="text-3xl font-bold text-foreground">Combo Offer</h1>
                 <p className="text-muted-foreground mt-1 max-w-2xl">
                     Create and analyze combo deals for your scarves to boost sales and provide value.
                 </p>

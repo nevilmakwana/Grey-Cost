@@ -1,10 +1,11 @@
-
 "use client";
 
 import { useState, useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { RotateCcw } from 'lucide-react';
 
 const formatNumber = (value: number, decimals = 2) => {
     if (isNaN(value)) return '0.00';
@@ -12,8 +13,13 @@ const formatNumber = (value: number, decimals = 2) => {
 };
 
 export function ShrinkageReport() {
-    const [totalFabricLength, setTotalFabricLength] = useState(100);
-    const [shrinkagePercentage, setShrinkagePercentage] = useState(2);
+    const [totalFabricLength, setTotalFabricLength] = useState(0);
+    const [shrinkagePercentage, setShrinkagePercentage] = useState(0);
+
+    const handleReset = () => {
+        setTotalFabricLength(0);
+        setShrinkagePercentage(0);
+    };
 
     const results = useMemo(() => {
         const shrinkageLoss = totalFabricLength * (shrinkagePercentage / 100);
@@ -45,24 +51,36 @@ export function ShrinkageReport() {
                             <Label htmlFor="total-fabric-length" className="text-sm">Total Fabric Length (m)</Label>
                             <Input
                                 type="number"
+                                inputMode="decimal"
                                 id="total-fabric-length"
-                                value={String(totalFabricLength)}
+                                value={totalFabricLength === 0 ? '' : String(totalFabricLength)}
                                 onChange={(e) => setTotalFabricLength(parseFloat(e.target.value) || 0)}
                                 onWheel={(e) => (e.target as HTMLElement).blur()}
                                 className="font-sans text-sm"
+                                placeholder=""
                             />
                         </div>
                         <div className="space-y-1.5">
                             <Label htmlFor="shrinkage-percentage" className="text-sm">Shrinkage (%)</Label>
                             <Input
                                 type="number"
+                                inputMode="decimal"
                                 id="shrinkage-percentage"
-                                value={String(shrinkagePercentage)}
+                                value={shrinkagePercentage === 0 ? '' : String(shrinkagePercentage)}
                                 onChange={(e) => setShrinkagePercentage(parseFloat(e.target.value) || 0)}
                                 onWheel={(e) => (e.target as HTMLElement).blur()}
                                 className="font-sans text-sm"
+                                placeholder=""
                             />
                         </div>
+                        <Button 
+                            variant="outline" 
+                            className="w-full"
+                            onClick={handleReset}
+                        >
+                            <RotateCcw className="mr-2 h-4 w-4" />
+                            Reset
+                        </Button>
                     </CardContent>
                 </Card>
 

@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState, useMemo, useEffect } from 'react';
@@ -14,6 +13,7 @@ import html2canvas from 'html2canvas';
 import { renderToString } from 'react-dom/server';
 import { ComboPdfDocument } from './combo-pdf-document';
 import { useToast } from '@/hooks/use-toast';
+import { RotateCcw } from 'lucide-react';
 
 
 const formatCurrency = (value: number) => {
@@ -35,15 +35,15 @@ const toTwoDecimals = (value: number) => {
 }
 
 export function ComboOfferCalculator() {
-    const [num90cm, setNum90cm] = useState(1);
-    const [num50cm, setNum50cm] = useState(1);
-    const [comboDiscount, setComboDiscount] = useState(10); // in percentage
+    const [num90cm, setNum90cm] = useState(0);
+    const [num50cm, setNum50cm] = useState(0);
+    const [comboDiscount, setComboDiscount] = useState(0);
 
     // Pricing Assumptions
-    const [sellingPrice90cm, setSellingPrice90cm] = useState(494.52);
-    const [cost90cm, setCost90cm] = useState(395.61);
-    const [sellingPrice50cm, setSellingPrice50cm] = useState(210.51);
-    const [cost50cm, setCost50cm] = useState(168.41);
+    const [sellingPrice90cm, setSellingPrice90cm] = useState(0);
+    const [cost90cm, setCost90cm] = useState(0);
+    const [sellingPrice50cm, setSellingPrice50cm] = useState(0);
+    const [cost50cm, setCost50cm] = useState(0);
 
     const [costBreakdown90cm, setCostBreakdown90cm] = useState({ productionCost: 0, overheadCost: 0 });
     const [costBreakdown50cm, setCostBreakdown50cm] = useState({ productionCost: 0, overheadCost: 0 });
@@ -77,6 +77,16 @@ export function ComboOfferCalculator() {
             });
         }
     }, []);
+
+    const handleReset = () => {
+        setNum90cm(0);
+        setNum50cm(0);
+        setComboDiscount(0);
+        setSellingPrice90cm(0);
+        setCost90cm(0);
+        setSellingPrice50cm(0);
+        setCost50cm(0);
+    };
 
     const results = useMemo(() => {
         const totalScarves = num90cm + num50cm;
@@ -173,37 +183,53 @@ export function ComboOfferCalculator() {
                                 <Label htmlFor="num-90cm" className="text-sm">Number of 90x90cm Scarves</Label>
                                 <Input
                                     type="number"
+                                    inputMode="numeric"
+                                    pattern="[0-9]*"
                                     id="num-90cm"
-                                    value={String(num90cm)}
+                                    value={num90cm === 0 ? '' : String(num90cm)}
                                     onChange={(e) => setNum90cm(parseInt(e.target.value, 10) || 0)}
                                     onWheel={(e) => (e.target as HTMLElement).blur()}
                                     min="0"
                                     className="font-sans text-sm"
+                                    placeholder=""
                                 />
                             </div>
                             <div className="space-y-1.5">
                                 <Label htmlFor="num-50cm" className="text-sm">Number of 50x50cm Scarves</Label>
                                 <Input
                                     type="number"
+                                    inputMode="numeric"
+                                    pattern="[0-9]*"
                                     id="num-50cm"
-                                    value={String(num50cm)}
+                                    value={num50cm === 0 ? '' : String(num50cm)}
                                     onChange={(e) => setNum50cm(parseInt(e.target.value, 10) || 0)}
                                     onWheel={(e) => (e.target as HTMLElement).blur()}
                                     min="0"
                                     className="font-sans text-sm"
+                                    placeholder=""
                                 />
                             </div>
                             <div className="space-y-1.5">
                                 <Label htmlFor="combo-discount" className="text-sm">Combo Discount (%)</Label>
                                 <Input
                                     type="number"
+                                    inputMode="decimal"
                                     id="combo-discount"
-                                    value={String(comboDiscount)}
+                                    value={comboDiscount === 0 ? '' : String(comboDiscount)}
                                     onChange={(e) => setComboDiscount(parseFloat(e.target.value) || 0)}
                                     onWheel={(e) => (e.target as HTMLElement).blur()}
                                     className="font-sans text-sm"
+                                    placeholder=""
                                 />
                             </div>
+                            <Button 
+                                variant="outline" 
+                                className="w-full"
+                                onClick={handleReset}
+                            >
+                                <RotateCcw className="mr-2 h-4 w-4" />
+                                Reset
+                            </Button>
                         </CardContent>
                     </Card>
 

@@ -1,7 +1,6 @@
-
 "use client";
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
@@ -55,13 +54,13 @@ const ResultRow = ({ label, value, unit, breakdown }: { label: string, value: st
 
 export function SewingThreadCalculator() {
     const [quantities, setQuantities] = useState({
-        '90x90 cm': 100,
-        '50x50 cm': 50,
+        '90x90 cm': 0,
+        '50x50 cm': 0,
     });
     const [reelLength, setReelLength] = useState('800');
     const [reelPriceRetail] = useState(7);
     const [reelPriceBulk] = useState(6);
-    const [wastageInches, setWastageInches] = useState(12);
+    const [wastageInches, setWastageInches] = useState(0);
     
     const handleQuantityChange = (scarfSize: string, value: string) => {
         setQuantities(prev => ({
@@ -69,6 +68,14 @@ export function SewingThreadCalculator() {
             [scarfSize]: parseInt(value, 10) || 0,
         }));
     };
+
+    useEffect(() => {
+        setQuantities({
+            '90x90 cm': 0,
+            '50x50 cm': 0,
+        });
+        setWastageInches(0);
+    }, [reelLength]);
 
     const results = useMemo(() => {
         const selectedReelLength = parseInt(reelLength, 10);
@@ -155,12 +162,15 @@ export function SewingThreadCalculator() {
                                 <Label htmlFor="wastage" className="text-sm">Thread Wastage per Scarf (inches)</Label>
                                 <Input
                                     type="number"
+                                    inputMode="numeric"
+                                    pattern="[0-9]*"
                                     id="wastage"
-                                    value={String(wastageInches)}
+                                    value={wastageInches === 0 ? '' : String(wastageInches)}
                                     onChange={(e) => setWastageInches(parseInt(e.target.value, 10) || 0)}
                                     onWheel={(e) => (e.target as HTMLElement).blur()}
                                     min="0"
                                     className="font-sans text-sm"
+                                    placeholder=""
                                 />
                             </div>
                         </CardContent>
@@ -176,12 +186,15 @@ export function SewingThreadCalculator() {
                                     <Label htmlFor={`quantity-${size}`} className="text-sm">Quantity ({size})</Label>
                                     <Input
                                         type="number"
+                                        inputMode="numeric"
+                                        pattern="[0-9]*"
                                         id={`quantity-${size}`}
-                                        value={String(quantities[size as keyof typeof quantities])}
+                                        value={quantities[size as keyof typeof quantities] === 0 ? '' : String(quantities[size as keyof typeof quantities])}
                                         onChange={(e) => handleQuantityChange(size, e.target.value)}
                                         onWheel={(e) => (e.target as HTMLElement).blur()}
                                         min="0"
                                         className="font-sans text-sm"
+                                        placeholder=""
                                     />
                                 </div>
                             ))}

@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState, useMemo } from 'react';
@@ -7,7 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
 import { Button } from './ui/button';
-import { Info } from 'lucide-react';
+import { Info, RotateCcw } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from './ui/dialog';
 import { CalculationBreakdown } from './calculation-breakdown';
 
@@ -22,16 +21,25 @@ const formatCurrency = (value: number) => {
 
 export function FabricLogisticsCalculator() {
     // Stage 1 Inputs
-    const [totalRawFabric, setTotalRawFabric] = useState(1000);
-    const [rawFabricDeliveryCost, setRawFabricDeliveryCost] = useState(200);
+    const [totalRawFabric, setTotalRawFabric] = useState(0);
+    const [rawFabricDeliveryCost, setRawFabricDeliveryCost] = useState(0);
 
     // Stage 2 Inputs
-    const [fabricForProcessing, setFabricForProcessing] = useState(165);
-    const [processingDeliveryCost, setProcessingDeliveryCost] = useState(122);
+    const [fabricForProcessing, setFabricForProcessing] = useState(0);
+    const [processingDeliveryCost, setProcessingDeliveryCost] = useState(0);
     
     // Production Quantities
-    const [num90cm, setNum90cm] = useState(100);
-    const [num50cm, setNum50cm] = useState(50);
+    const [num90cm, setNum90cm] = useState(0);
+    const [num50cm, setNum50cm] = useState(0);
+
+    const handleReset = () => {
+        setTotalRawFabric(0);
+        setRawFabricDeliveryCost(0);
+        setFabricForProcessing(0);
+        setProcessingDeliveryCost(0);
+        setNum90cm(0);
+        setNum50cm(0);
+    };
 
     const calculations = useMemo(() => {
         // Calculate cost from Stage 1 attributed to this processing lot
@@ -84,20 +92,24 @@ export function FabricLogisticsCalculator() {
                                 <Label htmlFor="total-raw-fabric">Total Raw Fabric Purchased (m)</Label>
                                 <Input
                                     type="number"
+                                    inputMode="decimal"
                                     id="total-raw-fabric"
-                                    value={String(totalRawFabric)}
+                                    value={totalRawFabric === 0 ? '' : String(totalRawFabric)}
                                     onChange={(e) => setTotalRawFabric(parseFloat(e.target.value) || 0)}
                                     onWheel={(e) => (e.target as HTMLElement).blur()}
+                                    placeholder=""
                                 />
                             </div>
                             <div className="space-y-1.5">
                                 <Label htmlFor="raw-fabric-delivery-cost">Delivery Cost (Market to Factory) (₹)</Label>
                                 <Input
                                     type="number"
+                                    inputMode="decimal"
                                     id="raw-fabric-delivery-cost"
-                                    value={String(rawFabricDeliveryCost)}
+                                    value={rawFabricDeliveryCost === 0 ? '' : String(rawFabricDeliveryCost)}
                                     onChange={(e) => setRawFabricDeliveryCost(parseFloat(e.target.value) || 0)}
                                     onWheel={(e) => (e.target as HTMLElement).blur()}
+                                    placeholder=""
                                 />
                             </div>
                         </CardContent>
@@ -111,20 +123,24 @@ export function FabricLogisticsCalculator() {
                                 <Label htmlFor="fabric-for-processing">Fabric Sent for Processing (m)</Label>
                                 <Input
                                     type="number"
+                                    inputMode="decimal"
                                     id="fabric-for-processing"
-                                    value={String(fabricForProcessing)}
+                                    value={fabricForProcessing === 0 ? '' : String(fabricForProcessing)}
                                     onChange={(e) => setFabricForProcessing(parseFloat(e.target.value) || 0)}
                                     onWheel={(e) => (e.target as HTMLElement).blur()}
+                                    placeholder=""
                                 />
                             </div>
                             <div className="space-y-1.5">
                                 <Label htmlFor="processing-delivery-cost">Delivery Cost (Processing & Return) (₹)</Label>
                                 <Input
                                     type="number"
+                                    inputMode="decimal"
                                     id="processing-delivery-cost"
-                                    value={String(processingDeliveryCost)}
+                                    value={processingDeliveryCost === 0 ? '' : String(processingDeliveryCost)}
                                     onChange={(e) => setProcessingDeliveryCost(parseFloat(e.target.value) || 0)}
                                     onWheel={(e) => (e.target as HTMLElement).blur()}
+                                    placeholder=""
                                 />
                             </div>
                         </CardContent>
@@ -133,27 +149,43 @@ export function FabricLogisticsCalculator() {
                         <CardHeader>
                             <CardTitle>Production Quantities</CardTitle>
                         </CardHeader>
-                        <CardContent className="grid grid-cols-2 gap-4">
-                             <div className="space-y-1.5">
-                                <Label htmlFor="num-90cm-stage2">Quantity (90x90 cm)</Label>
-                                <Input
-                                    type="number"
-                                    id="num-90cm-stage2"
-                                    value={String(num90cm)}
-                                    onChange={(e) => setNum90cm(parseInt(e.target.value, 10) || 0)}
-                                    onWheel={(e) => (e.target as HTMLElement).blur()}
-                                />
+                        <CardContent className="space-y-4">
+                            <div className="grid grid-cols-2 gap-4">
+                                <div className="space-y-1.5">
+                                    <Label htmlFor="num-90cm-stage2">Quantity (90x90 cm)</Label>
+                                    <Input
+                                        type="number"
+                                        inputMode="numeric"
+                                        pattern="[0-9]*"
+                                        id="num-90cm-stage2"
+                                        value={num90cm === 0 ? '' : String(num90cm)}
+                                        onChange={(e) => setNum90cm(parseInt(e.target.value, 10) || 0)}
+                                        onWheel={(e) => (e.target as HTMLElement).blur()}
+                                        placeholder=""
+                                    />
+                                </div>
+                                <div className="space-y-1.5">
+                                    <Label htmlFor="num-50cm-stage2">Quantity (50x50 cm)</Label>
+                                    <Input
+                                        type="number"
+                                        inputMode="numeric"
+                                        pattern="[0-9]*"
+                                        id="num-50cm-stage2"
+                                        value={num50cm === 0 ? '' : String(num50cm)}
+                                        onChange={(e) => setNum50cm(parseInt(e.target.value, 10) || 0)}
+                                        onWheel={(e) => (e.target as HTMLElement).blur()}
+                                        placeholder=""
+                                    />
+                                </div>
                             </div>
-                             <div className="space-y-1.5">
-                                <Label htmlFor="num-50cm-stage2">Quantity (50x50 cm)</Label>
-                                <Input
-                                    type="number"
-                                    id="num-50cm-stage2"
-                                    value={String(num50cm)}
-                                    onChange={(e) => setNum50cm(parseInt(e.target.value, 10) || 0)}
-                                    onWheel={(e) => (e.target as HTMLElement).blur()}
-                                />
-                            </div>
+                            <Button 
+                                variant="outline" 
+                                className="w-full"
+                                onClick={handleReset}
+                            >
+                                <RotateCcw className="mr-2 h-4 w-4" />
+                                Reset
+                            </Button>
                         </CardContent>
                     </Card>
                 </div>

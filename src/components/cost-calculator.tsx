@@ -235,7 +235,7 @@ export function CostCalculator() {
               <ResultDisplay label="Overheads" value={results.overheadValue} />
               <Separator />
               <ResultDisplay
-                label="Selling Price"
+                label="Making Cost"
                 value={results.sellingPrice}
                 isEmphasized
               />
